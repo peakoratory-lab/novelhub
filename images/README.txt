@@ -1,0 +1,1 @@
+Coloque capas nesta pasta. Exemplo: minha-capa.jpg. Depois use o nome no campo cover de data/novels.json.

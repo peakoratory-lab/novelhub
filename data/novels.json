@@ -1,0 +1,206 @@
+[
+  {
+    "id": "astralia",
+    "title": "Astralia — Volume 1",
+    "author": "Team NovelHub",
+    "cover": "AstraliaVol1.png",
+    "status": "Em breve",
+    "genres": [
+      "Isekai",
+      "Fantasia",
+      "Ação",
+      "VRMMO"
+    ],
+    "description": "Lost passou seis anos dentro de Astralia. No instante em que o jogo é encerrado, ele desperta dentro do próprio mundo que conhecia como jogo — agora com Level 1, uma única espada e os amigos espalhados.",
+    "chapters": [],
+    "info": "O Volume 1 de Astralia está sendo refeito. O prólogo e o novo capítulo serão publicados em breve."
+  },
+  {
+    "id": "eighty-six-volume-1",
+    "title": "86 — Eighty Six — Volume 1",
+    "author": "Asato Asato",
+    "translator": "Time NovelHub",
+    "cover": "86cover.webp",
+    "featured": true,
+    "featuredImage": "lenaeshin.png",
+    "status": "Em andamento",
+    "genres": [
+      "Ação",
+      "Ficção científica",
+      "Drama"
+    ],
+    "description": "A novel de Eighty Six traduzida pelo time da NovelHub, sem ilustrações.",
+    "chapters": [
+      {
+        "number": 0,
+        "slug": "prologo",
+        "label": "Prólogo",
+        "title": "As papoulas que florescem vermelhas no campo de batalha",
+        "file": "capitulo-01.html",
+        "volume": 1
+      }
+    ],
+    "info": "Volume 1 traduzido pelo time da NovelHub."
+  },
+  {
+    "id": "the-eminence-in-shadow-volume-1",
+    "title": "The Eminence in Shadow — Volume 1",
+    "author": "Daisuke Aizawa",
+    "translator": "Time NovelHub",
+    "cover": "theeminenceinshadow.jpg",
+    "status": "Em andamento",
+    "genres": [
+      "Ação",
+      "Fantasia",
+      "Isekai"
+    ],
+    "description": "Cid Kagenou prepara o palco perfeito para se tornar a Eminência nas sombras.",
+    "chapters": [
+      {
+        "number": 0,
+        "slug": "prologo",
+        "label": "Prólogo",
+        "title": "Preparando o Palco Perfeito!",
+        "file": "capitulo-01.html",
+        "volume": 1
+      },
+      {
+        "number": 1,
+        "label": "Capítulo 1",
+        "title": "Iniciando o Tutorial de Shadowbroker!",
+        "file": "volume-1/capitulo-01.html",
+        "volume": 1
+      },
+      {
+        "number": 2,
+        "label": "Capítulo 2",
+        "title": "Assumindo o Papel de um Personagem Secundário na Escola!",
+        "file": "volume-1/capitulo-02.html",
+        "volume": 1
+      },
+      {
+        "number": 3,
+        "label": "Capítulo 3",
+        "title": "Meu Início Oficial como um Mastermind em Ação!",
+        "file": "volume-1/capitulo-03.html",
+        "volume": 1
+      },
+      {
+        "number": 4,
+        "label": "Capítulo 4",
+        "title": "Os Dois Lados do Shadow Garden?!",
+        "file": "volume-1/capitulo-04.html",
+        "volume": 1
+      },
+      {
+        "number": 5,
+        "label": "Capítulo 5",
+        "title": "Dominando a Vida Pacífica de um Ninguém!",
+        "file": "volume-1/capitulo-05.html",
+        "volume": 1
+      },
+      {
+        "number": 6,
+        "label": "Capítulo 6",
+        "title": "Aquela Cena em que Terroristas Tomam a Escola",
+        "file": "volume-1/capitulo-06.html",
+        "volume": 1
+      },
+      {
+        "number": 7,
+        "label": "Capítulo Final",
+        "title": "Minha Ideia do Comandante das Sombras Definitivo!",
+        "file": "volume-1/capitulo-07.html",
+        "volume": 1
+      }
+    ],
+    "info": "Volume 1 traduzido pelo time da NovelHub, sem ilustrações."
+  },
+  {
+    "id": "the-eminence-in-shadow-volume-2",
+    "title": "The Eminence in Shadow — Volume 2",
+    "author": "Daisuke Aizawa",
+    "translator": "Time NovelHub",
+    "cover": "theeminenceinshadow2.webp",
+    "status": "Em breve",
+    "genres": [
+      "Ação",
+      "Fantasia",
+      "Isekai"
+    ],
+    "description": "A próxima etapa da jornada de Cid e do Shadow Garden. Este volume será publicado em breve no NovelHub.",
+    "chapters": [],
+    "info": "Volume 2 em preparação."
+  },
+  {
+    "id": "seirei-gensouki-volume-1",
+    "title": "Seirei Gensouki — Volume 1",
+    "author": "Yuri Kitayama",
+    "translator": "Time NovelHub",
+    "cover": "seirei1.jpg",
+    "featured": true,
+    "status": "Novo",
+    "genres": [
+      "Fantasia",
+      "Aventura",
+      "Romance",
+      "Isekai"
+    ],
+    "description": "Rio desperta em um mundo diferente carregando memórias de uma vida que não consegue esquecer. Uma nova jornada começa.",
+    "chapters": [
+      {
+        "number": 0,
+        "slug": "prologo",
+        "label": "Prólogo",
+        "title": "Prólogo",
+        "file": "prologo.html",
+        "volume": 1
+      },
+      {
+        "number": 1,
+        "label": "Capítulo 1",
+        "title": "Vida Passada",
+        "file": "capitulo-01.html",
+        "volume": 1
+      },
+      {
+        "number": 2,
+        "label": "Capítulo 2",
+        "title": "Outro Mundo",
+        "file": "capitulo-02.html",
+        "volume": 1
+      }
+    ],
+    "info": "Acompanhe a jornada de Rio e seus amigos. O prólogo do volume 1 já está disponível."
+  },
+  {
+    "id": "chitose-is-in-the-ramune-bottle-volume-1",
+    "title": "Chitose Is in the Ramune Bottle — Volume 1",
+    "author": "裕夢",
+    "cover": "chitose1.jfif",
+    "status": "Em breve",
+    "genres": [
+      "Romance",
+      "Drama",
+      "Vida escolar"
+    ],
+    "description": "Uma história de juventude, relações e sentimentos escondidos sob a superfície perfeita da escola.",
+    "chapters": [],
+    "info": "Volume 1 em preparação para publicação no NovelHub."
+  },
+  {
+    "id": "bounty-rushers",
+    "title": "Bounty Rushers — Volume 1",
+    "author": "L. Monts",
+    "cover": "BountyRushers1.png",
+    "status": "Em breve",
+    "genres": [
+      "Ação",
+      "Fantasia",
+      "Aventura"
+    ],
+    "description": "O reboot da famosa novel Bounty Rush: ORIGIN, publicado oficialmente pela NovelHub em parceria com a SOFT BOOKS.",
+    "chapters": [],
+    "info": "Bounty Rushers será publicado em breve."
+  }
+]

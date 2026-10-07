@@ -1,0 +1,39 @@
+const $=(s,r=document)=>r.querySelector(s);
+const fallbackNovels=[
+{id:"astralia",title:"Astralia — Volume 1",author:"Team NovelHub",cover:"AstraliaVol1.png",status:"Em breve",genres:["Isekai","Fantasia","Ação","VRMMO"],description:"Lost passou seis anos dentro de Astralia. No instante em que o jogo é encerrado, ele desperta dentro do próprio mundo que conhecia como jogo.",chapters:[]},
+{id:"eighty-six-volume-1",title:"86 — Eighty Six — Volume 1",author:"Asato Asato",cover:"86cover.webp",status:"Em andamento",genres:["Ação","Ficção científica","Drama"],description:"A novel de Eighty Six traduzida pelo time da NovelHub.",chapters:[{number:0,slug:"prologo",label:"Prólogo",title:"As papoulas que florescem vermelhas no campo de batalha",file:"capitulo-01.html",volume:1}]},
+{id:"the-eminence-in-shadow-volume-1",title:"The Eminence in Shadow — Volume 1",author:"Daisuke Aizawa",cover:"theeminenceinshadow.jpg",status:"Em andamento",genres:["Ação","Fantasia","Isekai"],description:"Cid Kagenou prepara o palco perfeito para se tornar a Eminência nas sombras.",chapters:[{number:0,slug:"prologo",label:"Prólogo",title:"Preparando o Palco Perfeito!",file:"capitulo-01.html",volume:1}]},
+{id:"the-eminence-in-shadow-volume-2",title:"The Eminence in Shadow — Volume 2",author:"Daisuke Aizawa",cover:"theeminenceinshadow2.webp",status:"Em breve",genres:["Ação","Fantasia","Isekai"],description:"A próxima etapa da jornada de Cid e do Shadow Garden.",chapters:[]},
+{id:"seirei-gensouki-volume-1",title:"Seirei Gensouki — Volume 1",author:"Yuri Kitayama",cover:"seirei1.jpg",status:"Novo",genres:["Fantasia","Aventura","Romance","Isekai"],description:"Rio desperta em um mundo diferente carregando memórias de uma vida que não consegue esquecer.",chapters:[{number:0,slug:"prologo",label:"Prólogo",title:"Prólogo",file:"prologo.html",volume:1},{number:1,label:"Capítulo 1",title:"Vida Passada",file:"capitulo-01.html",volume:1},{number:2,label:"Capítulo 2",title:"Outro Mundo",file:"capitulo-02.html",volume:1}]},
+{id:"chitose-is-in-the-ramune-bottle-volume-1",title:"Chitose Is in the Ramune Bottle — Volume 1",author:"裕夢",cover:"chitose1.jfif",status:"Em breve",genres:["Romance","Drama","Vida escolar"],description:"Uma história de juventude, relações e sentimentos escondidos.",chapters:[]},
+{id:"bounty-rushers",title:"Bounty Rushers — Volume 1",author:"L. Monts",cover:"BountyRushers1.png",status:"Em breve",genres:["Ação","Fantasia","Aventura"],description:"O reboot da famosa novel Bounty Rush: ORIGIN.",chapters:[]}
+];
+fallbackNovels.find(n=>n.id==="astralia").info="O Volume 1 de Astralia está sendo refeito. O prólogo e o novo capítulo serão publicados em breve.";
+fallbackNovels.find(n=>n.id==="eighty-six-volume-1").info="Volume 1 traduzido pelo time da NovelHub.";
+const eminenceFallback=fallbackNovels.find(n=>n.id==="the-eminence-in-shadow-volume-1");
+eminenceFallback.info="Volume 1 traduzido pelo time da NovelHub, sem ilustrações.";
+eminenceFallback.chapters=[
+{number:0,slug:"prologo",label:"Prólogo",title:"Preparando o Palco Perfeito!",file:"capitulo-01.html",volume:1},
+{number:1,label:"Capítulo 1",title:"Iniciando o Tutorial de Shadowbroker!",file:"volume-1/capitulo-01.html",volume:1},
+{number:2,label:"Capítulo 2",title:"Assumindo o Papel de um Personagem Secundário na Escola!",file:"volume-1/capitulo-02.html",volume:1},
+{number:3,label:"Capítulo 3",title:"Meu Início Oficial como um Mastermind em Ação!",file:"volume-1/capitulo-03.html",volume:1},
+{number:4,label:"Capítulo 4",title:"Os Dois Lados do Shadow Garden?!",file:"volume-1/capitulo-04.html",volume:1},
+{number:5,label:"Capítulo 5",title:"Dominando a Vida Pacífica de um Ninguém!",file:"volume-1/capitulo-05.html",volume:1},
+{number:6,label:"Capítulo 6",title:"Aquela Cena em que Terroristas Tomam a Escola",file:"volume-1/capitulo-06.html",volume:1},
+{number:7,label:"Capítulo Final",title:"Minha Ideia do Comandante das Sombras Definitivo!",file:"volume-1/capitulo-07.html",volume:1}
+];
+fallbackNovels.find(n=>n.id==="the-eminence-in-shadow-volume-2").info="Volume 2 em preparação.";
+fallbackNovels.find(n=>n.id==="seirei-gensouki-volume-1").info="Acompanhe a jornada de Rio e seus amigos. O prólogo do volume 1 já está disponível.";
+fallbackNovels.find(n=>n.id==="chitose-is-in-the-ramune-bottle-volume-1").info="Volume 1 em preparação para publicação no NovelHub.";
+fallbackNovels.find(n=>n.id==="bounty-rushers").info="Bounty Rushers será publicado em breve.";
+function theme(){if(localStorage.getItem("theme")==="light")document.body.classList.add("light");const b=$("#themeToggle");if(b)b.onclick=()=>{document.body.classList.toggle("light");localStorage.setItem("theme",document.body.classList.contains("light")?"light":"dark")}}
+function load(){if(location.protocol==="file:")return Promise.resolve(fallbackNovels);return fetch("data/novels.json").then(r=>r.ok?r.json():Promise.reject()).catch(()=>fallbackNovels)}
+function card(n){return `<a class="card" href="novel.html?id=${n.id}"><div class="img"><img src="images/${n.cover}" alt="Capa de ${n.title}"><span class="card-status">${n.status}</span></div><div class="card-body"><div class="card-meta"><span>VOLUME INDEPENDENTE</span><span>${n.chapters.length?`${n.chapters.length} capítulo${n.chapters.length===1?"":"s"}`:"Em breve"}</span></div><h3>${n.title}</h3><p>por ${n.author}</p><div class="tags">${n.genres.map(g=>`<span class="tag">${g}</span>`).join("")}</div></div></a>`}
+document.addEventListener("DOMContentLoaded",()=>{theme();load().then(ns=>{const f=$("#featured");if(f){const n=ns.find(x=>x.featured)||ns[0];f.innerHTML=`<div class="feature"><div class="cover"><img src="images/${n.cover}" alt="Capa de ${n.title}"></div><div><label>✦ NOVO NO CATÁLOGO</label><h3>${n.title}</h3><p>${n.description}</p><span>${n.genres.join(" · ")} · ${n.chapters.length} capítulo${n.chapters.length===1?"":"s"}</span></div><a class="primary" href="novel.html?id=${n.id}">${n.chapters.length?"Ler agora →":"Ver volume →"}</a></div>`}const g=$("#allNovels");if(!g)return;const s=$("#search"),fs=$("#filters");let active="Todos";const genres=[...new Set(ns.flatMap(n=>n.genres))];fs.innerHTML=["Todos",...genres].map(x=>`<button class="filter ${x==="Todos"?"active":""}" data-g="${x}">${x}</button>`).join("");const render=()=>{const q=(s.value||"").toLowerCase();g.innerHTML=ns.filter(n=>(active==="Todos"||n.genres.includes(active))&&[n.title,n.author,n.description,...n.genres].join(" ").toLowerCase().includes(q)).map(card).join("")||"<p>Nenhuma história encontrada.</p>"};fs.onclick=e=>{if(!e.target.dataset.g)return;active=e.target.dataset.g;document.querySelectorAll(".filter").forEach(x=>x.classList.remove("active"));e.target.classList.add("active");render()};s.oninput=render;render()})});
+document.addEventListener("DOMContentLoaded",()=>{const nav=document.querySelector("header nav");if(nav&&!nav.querySelector('a[href="news.html"]'))nav.insertAdjacentHTML("beforeend",'<a href="news.html">News</a>')});
+document.addEventListener("DOMContentLoaded",()=>{const target=document.querySelector("#rankingList"),base=(window.NOVELHUB_CONFIG?.apiBase||"").replace(/\/$/,"");if(!target||!base)return;Promise.all([fetch(base+"/api/ranking?limit=5").then(r=>r.ok?r.json():Promise.reject()),load()]).then(([data,ns])=>{const names=Object.fromEntries(ns.map(n=>[n.id,n.title]));target.innerHTML=(data.ranking||[]).map((item,i)=>`<a class="ranking-row" href="novel.html?id=${item.novelId}"><span class="ranking-position">0${i+1}</span><span class="ranking-name">${names[item.novelId]||item.novelId}</span><strong>${item.reads} leitura${item.reads===1?"":"s"}</strong></a>`).join("")||"<p class=\"ranking-empty\">Ainda não há leituras registradas.</p>"}).catch(()=>{target.innerHTML="<p class=\"ranking-empty\">O ranking estará disponível em breve.</p>"})});
+
+
+
+
+
