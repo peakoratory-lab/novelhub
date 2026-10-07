@@ -28,7 +28,7 @@ fallbackNovels.find(n=>n.id==="chitose-is-in-the-ramune-bottle-volume-1").info="
 fallbackNovels.find(n=>n.id==="bounty-rushers").info="Bounty Rushers será publicado em breve.";
 function theme(){if(localStorage.getItem("theme")==="light")document.body.classList.add("light");const b=$("#themeToggle");if(b)b.onclick=()=>{document.body.classList.toggle("light");localStorage.setItem("theme",document.body.classList.contains("light")?"light":"dark")}}
 function load(){if(location.protocol==="file:")return Promise.resolve(fallbackNovels);return fetch("data/novels.json").then(r=>r.ok?r.json():Promise.reject()).catch(()=>fallbackNovels)}
-function apiBase(){return(window.NOVELHUB_CONFIG?.apiBase||"").replace(/\/$/,"")}
+function apiBase(){return(window.NOVELHUB_CONFIG?.apiBase||"https://novelhub-production-eeff.up.railway.app").replace(/\/$/,"")}
 function readStats(){const base=apiBase();if(!base)return Promise.resolve({total:0,novels:[]});return fetch(base+"/api/stats").then(r=>r.ok?r.json():Promise.reject()).catch(()=>({total:0,novels:[]}))}
 function readMap(stats){return Object.fromEntries((stats.novels||[]).map(item=>[item.novelId,item.reads]))}
 function readLabel(reads){return `${reads||0} leitura${reads===1?"":"s"}`}
