@@ -97,3 +97,11 @@ footer{border-color:var(--r-border);background:#080a11;padding:38px max(24px,cal
 body.light .novel-reading{background:linear-gradient(115deg,#f9e4de,#eeeafe);border-color:#d8a9a0}.novel-reading strong{color:#25232d}body.light .ranking-hero p{color:#686572}body.light .ranking-board{border-color:#ddd5cc;background:linear-gradient(135deg,#fffdf9,#f1ebe5)}body.light .ranking-board-head{border-color:#ddd5cc}body.light .full-ranking-row{border-color:#e3dbd4;color:#25232d}body.light .full-ranking-row:hover{background:#f8e8e3}body.light .full-ranking-main strong{color:#25232d}
 @media(max-width:700px){.novel-reading{width:100%;min-width:0}.novel-reading small{display:none}.ranking-page{padding-top:65px}.ranking-hero{padding-bottom:48px}.ranking-hero h1{letter-spacing:-4px}.ranking-summary{align-items:flex-start;flex-direction:column;gap:20px}.ranking-board-head{align-items:flex-start;flex-direction:column;gap:12px;padding:25px 20px}.full-ranking-row{grid-template-columns:31px 62px minmax(0,1fr);gap:12px;padding:17px 15px}.full-ranking-row:hover{padding-left:20px}.full-ranking-cover{width:62px;height:82px}.full-ranking-main strong{font-size:16px}.full-ranking-reads{grid-column:3;align-items:flex-start;flex-direction:row;gap:7px;margin-top:5px}.full-ranking-reads b{font-size:20px}.full-ranking-arrow{display:none}}
 
+/* Contraste reforçado para a leitura dentro da página da novel */
+.novel-reading{position:relative;isolation:isolate;overflow:hidden;background:linear-gradient(110deg,#3b2030 0%,#252047 58%,#172138 100%);border:1px solid #ff8d78;box-shadow:0 16px 42px rgba(255,102,84,.2),inset 0 1px rgba(255,255,255,.12)}
+.novel-reading::after{content:"";position:absolute;right:-35px;top:-50px;width:145px;height:145px;border-radius:50%;background:radial-gradient(circle,rgba(255,141,120,.35),transparent 68%);pointer-events:none;z-index:-1}
+.novel-reading div>strong{display:inline-block!important;color:#fff8ed!important;font:900 34px/1 Inter,ui-sans-serif,system-ui,sans-serif!important;text-shadow:0 3px 18px rgba(255,141,120,.55)}
+.novel-reading div>span{color:#ffd0c5!important;font-weight:900!important}
+.novel-reading small{color:#d7cfff!important;font-weight:800;white-space:nowrap}
+body.light .novel-reading{background:linear-gradient(110deg,#fff0eb,#eeeafe);border-color:#c9503d}.novel-reading .reading-orbit{flex:none}
+
