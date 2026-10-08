@@ -104,7 +104,19 @@ app.get("/api/stats", async (_req, res) => {
       GROUP BY novel_id
       ORDER BY reads DESC, novel_id ASC
     `);
-    return res.json({ ok: true, total: total.rows[0].total, novels: novels.rows });
+    const volumes = await pool.query(`
+      SELECT novel_id AS "novelId", volume, COUNT(*)::int AS reads
+      FROM read_events
+      GROUP BY novel_id, volume
+      ORDER BY novel_id ASC, volume ASC
+    `);
+    const chapters = await pool.query(`
+      SELECT novel_id AS "novelId", volume, chapter, COUNT(*)::int AS reads
+      FROM read_events
+      GROUP BY novel_id, volume, chapter
+      ORDER BY novel_id ASC, volume ASC, chapter ASC
+    `);
+    return res.json({ ok: true, total: total.rows[0].total, novels: novels.rows, volumes: volumes.rows, chapters: chapters.rows });
   } catch (error) {
     return res.status(500).json({ ok: false, error: "stats_failed" });
   }
