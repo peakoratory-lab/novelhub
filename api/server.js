@@ -4,9 +4,21 @@ const crypto = require("crypto");
 const { Pool } = require("pg");
 
 const app = express();
+app.disable("x-powered-by");
 const port = Number(process.env.PORT || 3000);
 const salt = process.env.READ_HASH_SALT || "change-this-in-production";
-const allowedOrigins = (process.env.FRONTEND_ORIGIN || "*").split(",").map(x => x.trim()).filter(Boolean);
+const configuredOrigins = (process.env.FRONTEND_ORIGIN || "").split(",").map(x => x.trim()).filter(Boolean);
+const allowedOrigins = configuredOrigins.length ? configuredOrigins : ["https://snovelhub.netlify.app", "http://localhost:3000", "http://127.0.0.1:3000"];
+
+app.use((req, res, next) => {
+  res.setHeader("X-Content-Type-Options", "nosniff");
+  res.setHeader("X-Frame-Options", "DENY");
+  res.setHeader("Referrer-Policy", "no-referrer");
+  res.setHeader("Permissions-Policy", "camera=(), microphone=(), geolocation=()");
+  res.setHeader("Cross-Origin-Resource-Policy", "cross-origin");
+  if (req.secure || req.headers["x-forwarded-proto"] === "https") res.setHeader("Strict-Transport-Security", "max-age=31536000; includeSubDomains");
+  next();
+});
 
 app.use(cors({
   origin(origin, callback) {
@@ -14,7 +26,19 @@ app.use(cors({
     return callback(new Error("Origin not allowed by CORS"));
   }
 }));
-app.use(express.json({ limit: "20kb" }));
+app.use(express.json({ limit: "8kb", strict: true }));
+const requestBuckets = new Map();
+function rateLimit(limit = 240, windowMs = 60000) {
+  return (req, res, next) => {
+    const key = req.ip || req.socket.remoteAddress || "unknown";
+    const now = Date.now();
+    const current = requestBuckets.get(key);
+    if (!current || now - current.startedAt >= windowMs) requestBuckets.set(key, { startedAt: now, count: 1 });
+    else if (++current.count > limit) return res.status(429).json({ ok: false, error: "rate_limit_exceeded" });
+    next();
+  };
+}
+app.use(rateLimit());
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
@@ -52,6 +76,9 @@ function clean(value, fallback = "") {
   return String(value ?? fallback).trim().slice(0, 120);
 }
 
+function validNovelId(value) { return /^[a-z0-9][a-z0-9-]{0,119}$/i.test(value); }
+function validChapter(value) { return /^[a-z0-9][a-z0-9._:-]{0,119}$/i.test(value); }
+function validVisitorId(value) { return /^[a-z0-9-]{16,120}$/i.test(value); }
 function visitorHash(visitorId) {
   return crypto.createHash("sha256").update(`${salt}:${visitorId}`).digest("hex");
 }
@@ -75,7 +102,9 @@ app.post("/api/reads", async (req, res) => {
   if (!novelId || !chapter || !visitorId) {
     return res.status(400).json({ ok: false, error: "novelId, chapter e visitorId são obrigatórios" });
   }
-  if (!process.env.DATABASE_URL) {
+  if (!validNovelId(novelId) || !validChapter(chapter) || !validVisitorId(visitorId)) {
+    return res.status(400).json({ ok: false, error: "invalid_read_parameters" });
+  }  if (!process.env.DATABASE_URL) {
     return res.status(503).json({ ok: false, error: "database_not_configured" });
   }
 
@@ -95,6 +124,7 @@ app.post("/api/reads", async (req, res) => {
 });
 
 app.get("/api/stats", async (_req, res) => {
+  res.setHeader("Cache-Control", "no-store");
   if (!process.env.DATABASE_URL) return res.status(503).json({ ok: false, error: "database_not_configured" });
   try {
     const total = await pool.query("SELECT COUNT(*)::int AS total FROM read_events");
@@ -123,6 +153,7 @@ app.get("/api/stats", async (_req, res) => {
 });
 
 app.get("/api/ranking", async (req, res) => {
+  res.setHeader("Cache-Control", "no-store");
   if (!process.env.DATABASE_URL) return res.status(503).json({ ok: false, error: "database_not_configured" });
   const limit = Math.max(1, Math.min(50, Number(req.query.limit || 5)));
   try {
