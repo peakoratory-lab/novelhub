@@ -1,33 +1,14 @@
-const novel$=(s,r=document)=>r.querySelector(s);
-const novelLoad=typeof load==="function"?load:()=>fetch("data/novels.json").then(r=>r.json());
-const novelStats=typeof readStats==="function"?readStats:()=>Promise.resolve({novels:[],volumes:[],chapters:[]});
-const novelMap=typeof readMap==="function"?readMap:(stats)=>Object.fromEntries((stats.novels||[]).map(item=>[item.novelId,item.reads]));
-const novelLabel=typeof readLabel==="function"?readLabel:(reads)=>`${reads||0} leitura${reads===1?"":"s"}`;
-const novelFav=typeof favoriteButton==="function"?favoriteButton:()=>"";
-const novelBindFav=typeof bindFavoriteButtons==="function"?bindFavoriteButtons:()=>{};const novelParams=new URLSearchParams(location.search);
-if(novelParams.get("id")==="seirei-gensouki")history.replaceState(null,"",`novel.html?id=seirei-gensouki-volume-1`);
-
-function renderNovel(ns,stats){
-  const n=ns.find(x=>x.id===novelParams.get("id"))||ns[0];
-  if(!n)return;
-  stats=stats||{novels:[],volumes:[],chapters:[]};
-  const reads=novelMap(stats)[n.id]||0;
-  const chapterStats=(stats.chapters||[]).filter(item=>item.novelId===n.id);
-  const volumeStats=(stats.volumes||[]).filter(item=>item.novelId===n.id);
-  const chapterReads=c=>{const found=chapterStats.find(item=>String(item.chapter)===String(c.number));return found?.reads||0};
-  const volumeReads=v=>volumeStats.find(item=>Number(item.volume)===Number(v))?.reads||0;
-  document.title=`${n.title} — NovelHub`;
-  const grouped=n.chapters.reduce((g,c)=>{(g[c.volume||1]||[]).push(c);return g},{});
-  const volumes=n.chapters.length?Object.entries(grouped).map(([v,items],i)=>`<details class="volume" ${i===0?"open":""}><summary><span>Volume ${v}</span><small>${items.length} capítulo${items.length===1?"":"s"} · ${novelLabel(volumeReads(v))}</small></summary><div class="volume-chapters">${items.map(c=>`<a class="chapter" href="reader.html?id=${n.id}&chapter=${c.slug||c.number}"><span><b>${c.label||`Capítulo ${c.number}`}</b> — ${c.title}</span><span class="chapter-read-count">◉ ${novelLabel(chapterReads(c))}</span><span>→</span></a>`).join("")}</div></details>`).join(""): `<p class="empty-chapters">Nenhum capítulo publicado ainda. Este volume chega em breve.</p>`;
-  const button=n.chapters.length?`<a class="primary" href="reader.html?id=${n.id}&chapter=${n.chapters[0].slug||n.chapters[0].number}">Começar a ler →</a>`:`<span class="primary is-disabled">Leitura em breve</span>`;
-  novel$("#novelPage").innerHTML=`<div class="breadcrumbs"><a href="explorar.html">Explorar</a><span> / </span>${n.title}</div><section class="novel"><div class="novel-cover"><img src="images/${n.cover}" alt="Capa de ${n.title}"><span class="novel-cover-label">${n.status}</span></div><div><label>${n.status.toUpperCase()}</label><h1>${n.title}</h1><div class="author">por ${n.author}</div>${n.translator?`<div class="translator">Tradução: ${n.translator}</div>`:""}<div class="tags">${n.genres.map(g=>`<span class="tag">${g}</span>`).join("")}</div><div class="novel-reading"><span class="reading-orbit">◉</span><div><strong>${reads}</strong><span>${reads===1?"leitura registrada":"leituras registradas"}</span></div><small>contagem da comunidade</small>${novelFav(n.id)}</div><p class="desc">${n.description}</p>${button}</div></section><section class="info-channel"><div class="channel-label">INFO DO VOLUME</div><div class="info-copy"><p>${n.info}</p></div></section><section class="chapter-section"><div class="section-heading"><div><label>LEITURA</label><h2>Capítulos deste volume</h2></div><span>${n.chapters.length} disponível${n.chapters.length===1?"":"eis"}</span></div><div class="chapters">${volumes}</div></section>`;
-  novelBindFav(document);
-}
-
-novelLoad().then(ns=>{
-  renderNovel(ns,{novels:[],volumes:[],chapters:[]});
-  Promise.race([novelStats(),new Promise(resolve=>setTimeout(()=>resolve({novels:[],volumes:[],chapters:[]}),5000))]).then(stats=>renderNovel(ns,stats));
-}).catch(()=>{
-  const target=novel$("#novelPage");
-  if(target)target.innerHTML='<p class="empty-chapters">Não foi possível carregar esta novel agora. Tente atualizar a página.</p>';
-});
+const novel$=(selector,root=document)=>root.querySelector(selector);
+const params=new URLSearchParams(location.search);
+const requestedId=params.get("id")==="seirei-gensouki"?"seirei-gensouki-volume-1":params.get("id");
+const apiBase=(window.NOVELHUB_CONFIG?.apiBase||"https://novelhub-production-eeff.up.railway.app").replace(/\/$/,"");
+const fallbackStats={novels:[],volumes:[],chapters:[]};
+const label=reads=>`${reads||0} leitura${reads===1?"":"s"}`;
+const favorites=()=>{try{return JSON.parse(localStorage.getItem("novelhub-favorites")||"[]")}catch(_){return []}};
+const favoriteMarkup=id=>{const active=favorites().includes(id);return `<button class="favorite-button ${active?"is-favorite":""}" type="button" data-favorite="${id}" aria-pressed="${active}"><span aria-hidden="true">♥</span><span class="favorite-button-label">${active?"Favorito":"Favoritar"}</span></button>`};
+function bindFavorites(){document.querySelectorAll("[data-favorite]").forEach(button=>button.onclick=event=>{event.preventDefault();const id=button.dataset.favorite;const ids=favorites();const active=!ids.includes(id);localStorage.setItem("novelhub-favorites",JSON.stringify(active?[...ids,id]:ids.filter(item=>item!==id)));button.classList.toggle("is-favorite",active);button.setAttribute("aria-pressed",String(active));const text=button.querySelector(".favorite-button-label");if(text)text.textContent=active?"Favorito":"Favoritar"})}
+async function getNovels(){const response=await fetch("data/novels.json",{cache:"no-store"});if(!response.ok)throw new Error("novels.json indisponível");return response.json()}
+async function getStats(){try{const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),4000);const response=await fetch(`${apiBase}/api/stats`,{signal:controller.signal});clearTimeout(timer);return response.ok?response.json():fallbackStats}catch(_){return fallbackStats}}
+function statsFor(stats,n){const novel=(stats.novels||[]).find(item=>item.novelId===n.id);const chapters=(stats.chapters||[]).filter(item=>item.novelId===n.id);const volumes=(stats.volumes||[]).filter(item=>item.novelId===n.id);return {reads:novel?.reads||0,chapterReads:chapter=>chapters.find(item=>String(item.chapter)===String(chapter.number))?.reads||0,volumeReads:volume=>volumes.find(item=>Number(item.volume)===Number(volume))?.reads||0}}
+function render(n,stats){const target=novel$("#novelPage");if(!target)return;const metric=statsFor(stats,n);document.title=`${n.title} — NovelHub`;const grouped=n.chapters.reduce((all,chapter)=>{(all[chapter.volume||1]||=[]).push(chapter);return all},{});const volumes=n.chapters.length?Object.entries(grouped).map(([volume,chapters],index)=>`<details class="volume" ${index===0?"open":""}><summary><span>Volume ${volume}</span><small>${chapters.length} capítulo${chapters.length===1?"":"s"} · ${label(metric.volumeReads(volume))}</small></summary><div class="volume-chapters">${chapters.map(chapter=>`<a class="chapter" href="reader.html?id=${n.id}&chapter=${chapter.slug||chapter.number}"><span><b>${chapter.label||`Capítulo ${chapter.number}`}</b> — ${chapter.title}</span><span class="chapter-read-count">◉ ${label(metric.chapterReads(chapter))}</span><span>→</span></a>`).join("")}</div></details>`).join(""):"<p class=\"empty-chapters\">Nenhum capítulo publicado ainda. Este volume chega em breve.</p>";const button=n.chapters.length?`<a class="primary" href="reader.html?id=${n.id}&chapter=${n.chapters[0].slug||n.chapters[0].number}">Começar a ler →</a>`:`<span class="primary is-disabled">Leitura em breve</span>`;target.innerHTML=`<div class="breadcrumbs"><a href="explorar.html">Explorar</a><span> / </span>${n.title}</div><section class="novel"><div class="novel-cover"><img src="images/${n.cover}" alt="Capa de ${n.title}"><span class="novel-cover-label">${n.status}</span></div><div><label>${n.status.toUpperCase()}</label><h1>${n.title}</h1><div class="author">por ${n.author}</div>${n.translator?`<div class="translator">Tradução: ${n.translator}</div>`:""}<div class="tags">${n.genres.map(genre=>`<span class="tag">${genre}</span>`).join("")}</div><div class="novel-reading"><span class="reading-orbit">◉</span><div><strong>${metric.reads}</strong><span>${metric.reads===1?"leitura registrada":"leituras registradas"}</span></div><small>contagem da comunidade</small>${favoriteMarkup(n.id)}</div><p class="desc">${n.description}</p>${button}</div></section><section class="info-channel"><div class="channel-label">INFO DO VOLUME</div><div class="info-copy"><p>${n.info||""}</p></div></section><section class="chapter-section"><div class="section-heading"><div><label>LEITURA</label><h2>Capítulos deste volume</h2></div><span>${n.chapters.length} disponível${n.chapters.length===1?"":"eis"}</span></div><div class="chapters">${volumes}</div></section>`;bindFavorites()}
+getNovels().then(novels=>{const novel=novels.find(item=>item.id===requestedId)||novels[0];if(!novel)throw new Error("novel não encontrada");render(novel,fallbackStats);getStats().then(stats=>render(novel,stats))}).catch(error=>{const target=novel$("#novelPage");if(target)target.innerHTML=`<p class="empty-chapters">Não foi possível carregar os capítulos. ${error.message}</p>`});
